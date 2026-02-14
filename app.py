@@ -1,18 +1,34 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask import Flask, request, send_file, jsonify
+import pandas as pd
+import io
 
 app = Flask(__name__)
-CORS(app, resources={r"/process": {"origins": "*"}})
 
 @app.route("/")
 def home():
-    return "API is running!"
+    return "Excel API is running!"
 
-@app.route("/process", methods=["POST", "OPTIONS"])
-def process_text():
-    if request.method == "OPTIONS":
-        return '', 200
+@app.route("/process-excel", methods=["POST"])
+def process_excel():
 
-    data = request.json
-    text = data.get("text", "")
-    return jsonify({"result": text.upper()})
+    if 'file' not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
+
+    file = request.files['file']
+
+    df = pd.read_excel(file)
+
+    # Example processing
+    df.dropna(how='all', inplace=True)
+    df.columns = [col.strip().upper() for col in df.columns]
+    df = df.drop_duplicates()
+
+    output = io.BytesIO()
+    df.to_excel(output, index=False)
+    output.seek(0)
+
+    return send_file(
+        output,
+        download_name="processed.xlsx",
+        as_attachment=True
+    )
