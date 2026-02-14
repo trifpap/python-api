@@ -6,8 +6,12 @@ app = Flask(__name__)
 def home():
     return "API is running!"
 
-@app.route("/process", methods=["POST"])
+@app.route("/process", methods=["GET", "POST"])
 def process_text():
-    data = request.json
-    text = data.get("text", "")
+    if request.method == "POST":
+        data = request.json
+        text = data.get("text", "")
+    else:
+        text = request.args.get("text", "")
+    
     return jsonify({"result": text.upper()})
