@@ -38,13 +38,39 @@ def add_header_footer(canvas, doc):
     #    )    
 
     # -------- FOOTER --------
-    page_number_text = f"Page {doc.page}"
+    #page_number_text = f"Page {doc.page}"
+    #canvas.setFont("Helvetica", 9)
+    #canvas.drawRightString(
+    #    doc.width + doc.rightMargin,
+    #    0.5 * inch,
+    #    page_number_text
+    #)
+
+    canvas.line(
+    doc.leftMargin,
+    0.75 * inch,
+    doc.width + doc.rightMargin,
+    0.75 * inch
+    )
+    
+    # -------- FOOTER --------   
     canvas.setFont("Helvetica", 9)
+
+    # Left footer (developer credit)
+    canvas.drawString(
+        doc.leftMargin,
+        0.5 * inch,
+        "Developed by Tryfon Papadopoulos"
+    )
+
+    # Right footer (page number)
+    page_number_text = f"Page {doc.page}"
     canvas.drawRightString(
         doc.width + doc.rightMargin,
         0.5 * inch,
         page_number_text
     )
+
 
     canvas.restoreState()
 
@@ -137,7 +163,7 @@ def process_excel():
         excel_base64 = base64.b64encode(excel_buffer.read()).decode('utf-8')
 
         # ---------------- AI STYLE SUMMARY TEXT ----------------      
-        original_df = pd.read_excel(request.files['file'])
+        #original_df = pd.read_excel(request.files['file'])
         original_columns = len(original_df.columns)        
 
         summary_text = f"""
@@ -169,15 +195,18 @@ def process_excel():
         styles = getSampleStyleSheet()    
 
         # -------- LOGO (TOP CENTERED) --------
-        logo_path = "logo.png"
+        logo_path = "logo.png"       
 
         if os.path.exists(logo_path):
             logo = Image(logo_path)
-            logo.drawHeight = 1.2 * inch
-            logo.drawWidth = 2.5 * inch
+
+            # Set only width
+            logo.drawWidth = 3 * inch
+            logo.drawHeight = logo.drawWidth * logo.imageHeight / logo.imageWidth
+
             logo.hAlign = 'CENTER'
             elements.append(logo)
-            elements.append(Spacer(1, 0.25 * inch))
+            elements.append(Spacer(1, 0.3 * inch))    
 
         # -------- LINE --------    
         elements.append(Spacer(1, 0.1 * inch))
