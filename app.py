@@ -87,16 +87,6 @@ def process_excel():
             #if df[col].dtype == object:
             #if pd.api.types.is_string_dtype(df[col]):
             if df[col].dtype == object or pd.api.types.is_string_dtype(df[col]):    
-                #df[col] = (
-                    #df[col]
-                    #.astype(str)                # ensure string
-                    #.where(df[col].notna(), None)
-
-                    #.str.strip()                # remove leading/trailing spaces
-                    #.str.replace(r'\s+', ' ', regex=True)  # remove extra inner spaces
-                    #.str.upper()     # Convert EVERYTHING to uppercase
-                #)
-
                 df[col] = (
                     df[col]
                     .fillna('')
@@ -152,6 +142,12 @@ def process_excel():
             country_freq = df["COUNTRY"].value_counts().reset_index()
             country_freq.columns = ["Country", "Count"]
 
+        nationality_freq = pd.DataFrame()
+        if "NATIONALITY" in df.columns:
+            nationality_freq = df["NATIONALITY"].value_counts().reset_index()
+            nationality_freq.columns = ["Nationality", "Count"]
+
+
         summary_df = pd.DataFrame({
             "Metric": [
                 "Rows",
@@ -184,7 +180,9 @@ def process_excel():
 
             if not country_freq.empty:
                 country_freq.to_excel(writer, sheet_name="COUNTRY_FREQ", index=False)
-       
+
+            if not nationality_freq.empty:
+                nationality_freq.to_excel(writer, sheet_name="NATIONALITY_FREQ", index=False)                 
 
             workbook = writer.book
 
@@ -221,6 +219,23 @@ def process_excel():
                 chart.set_categories(cats)
                 sheet.add_chart(chart, "E2")
 
+            # ---------------- NATIONALITY BAR CHART ----------------
+            if not nationality_freq.empty:
+                sheet = writer.sheets["NATIONALITY_FREQ"]
+                chart = BarChart()
+                chart.title = "Nationality Distribution"
+                chart.y_axis.title = "Count"
+
+                data = Reference(sheet, min_col=2, min_row=1,
+                                    max_col=2, max_row=len(country_freq)+1)
+                cats = Reference(sheet, min_col=1, min_row=2,
+                                    max_row=len(country_freq)+1)
+
+                chart.add_data(data, titles_from_data=True)
+                chart.set_categories(cats)
+                sheet.add_chart(chart, "E2")
+
+
             # ---------------- DATA QUALITY VISUAL ----------------
             summary_sheet = writer.sheets["SUMMARY"]
             if quality_score >= 80:
@@ -244,8 +259,6 @@ def process_excel():
         
         excel_buffer.seek(0)
         excel_base64 = base64.b64encode(excel_buffer.read()).decode('utf-8')
-
-
 
 
         # ---------------- AI STYLE SUMMARY TEXT ----------------             
