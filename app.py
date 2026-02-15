@@ -141,8 +141,7 @@ def process_excel():
                 "Min": numeric_df.min().round(2),
                 "Max": numeric_df.max().round(2)
             })
-            
-            stats_df_display = stats_df.applymap(lambda x: f"{x:,.2f}")    
+                         
 
         country_freq = pd.DataFrame()
         if "COUNTRY" in df.columns:
