@@ -203,14 +203,13 @@ def process_excel():
         if os.path.exists(logo_path):
             logo = Image(logo_path)
 
-            # Set a controlled smaller width
-            logo.drawWidth = 2.2 * inch
+            # Smaller controlled size (clean, not dominant)
+            logo.drawWidth = 1.7 * inch
             logo.drawHeight = logo.drawWidth * logo.imageHeight / logo.imageWidth
-
-            logo.hAlign = 'CENTER'
+            logo.hAlign = 'CENTER'           
 
             elements.append(logo)
-            elements.append(Spacer(1, 0.15 * inch))
+            elements.append(Spacer(1, 0.12 * inch))
 
 
         # -------- LINE --------    
