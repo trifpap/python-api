@@ -131,16 +131,18 @@ def process_excel():
         quality_score = round((1 - total_nulls/total_cells) * 100, 2)
 
         numeric_df = df.select_dtypes(include='number')
-        stats_df = pd.DataFrame()
+        stats_df = pd.DataFrame()      
 
         if not numeric_df.empty:
             stats_df = pd.DataFrame({
-                "Mean": numeric_df.mean(),
-                "Median": numeric_df.median(),
-                "Std Dev": numeric_df.std(),
-                "Min": numeric_df.min(),
-                "Max": numeric_df.max()
+                "Mean": numeric_df.mean().round(2),
+                "Median": numeric_df.median().round(2),
+                "Std Dev": numeric_df.std().round(2),
+                "Min": numeric_df.min().round(2),
+                "Max": numeric_df.max().round(2)
             })
+            
+            stats_df_display = stats_df.applymap(lambda x: f"{x:,.2f}")    
 
         country_freq = pd.DataFrame()
         if "COUNTRY" in df.columns:
