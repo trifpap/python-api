@@ -22,10 +22,13 @@ def process_excel():
         # Example processing 
         
         # Remove completely empty rows
-        df.dropna(how='all', inplace=True)
+        df.dropna(how='all', inplace=True)     
 
         # Clean column names
         df.columns = [col.strip().upper() for col in df.columns]
+
+        # Remove pandas duplicate suffix (.1, .2 etc.)
+        df.columns = df.columns.str.replace(r'\.\d+$', '', regex=True)
 
         # Remove duplicate columns (keep first occurrence)
         df = df.loc[:, ~df.columns.duplicated()]
