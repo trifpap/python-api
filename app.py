@@ -22,13 +22,13 @@ def add_header_footer(canvas, doc):
     if os.path.exists(logo_path):
         canvas.drawImage(
             logo_path,
-            x=(doc.width / 2),
-            x=doc.leftMargin,
-            y=doc.height + doc.topMargin - 0.5 * inch,
+            doc.leftMargin,
+            doc.height + doc.topMargin - 0.5 * inch,
             width=1.2 * inch,
             height=0.5 * inch,
             preserveAspectRatio=True
         )
+
 
     canvas.line(
         doc.leftMargin,
@@ -65,6 +65,7 @@ def process_excel():
 
     try:
         df = pd.read_excel(uploaded_file)
+        original_columns = len(df.columns)
 
         # ---------------- CLEANING ----------------
         df.dropna(how='all', inplace=True)
