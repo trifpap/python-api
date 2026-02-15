@@ -95,12 +95,20 @@ def process_excel():
         excel_buffer.seek(0)
         excel_base64 = base64.b64encode(excel_buffer.read()).decode('utf-8')
 
-        # ---------------- AI STYLE SUMMARY TEXT ----------------
+        # ---------------- AI STYLE SUMMARY TEXT ----------------      
+        original_df = pd.read_excel(request.files['file'])
+        original_columns = len(original_df.columns)
+
         summary_text = f"""
-        Dataset '{original_filename}' contains {num_rows} rows and {num_columns} columns.
-        {duplicate_rows} duplicate rows were removed.
-        Total null values: {total_nulls}.
-        Data quality score is {quality_score}%.
+        The uploaded file '{original_filename}' originally contained 
+        {original_columns} columns.
+
+        After cleaning and standardization, the processed dataset 
+        ('{excel_filename}') contains {num_rows} rows and {num_columns} columns.
+
+        Data Quality Score: {quality_score}%.
+        Duplicate Rows Removed: {duplicate_rows}.
+        Total Null Values: {total_nulls}.
         """
 
         if not numeric_df.empty:
