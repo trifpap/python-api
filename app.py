@@ -10,6 +10,44 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_CENTER
 
+from reportlab.lib.units import inch
+from reportlab.lib.utils import ImageReader
+import os
+
+def add_header_footer(canvas, doc):
+    canvas.saveState()
+
+    # -------- LOGO HEADER --------
+    logo_path = "logo.png"   # Put your logo file in same folder
+    if os.path.exists(logo_path):
+        canvas.drawImage(
+            logo_path,
+            x=(doc.width / 2),
+            x=doc.leftMargin,
+            y=doc.height + doc.topMargin - 0.5 * inch,
+            width=1.2 * inch,
+            height=0.5 * inch,
+            preserveAspectRatio=True
+        )
+
+    canvas.line(
+        doc.leftMargin,
+        doc.height + doc.topMargin - 0.6 * inch,
+        doc.width + doc.rightMargin,
+        doc.height + doc.topMargin - 0.6 * inch
+        )    
+
+    # -------- FOOTER --------
+    page_number_text = f"Page {doc.page}"
+    canvas.setFont("Helvetica", 9)
+    canvas.drawRightString(
+        doc.width + doc.rightMargin,
+        0.5 * inch,
+        page_number_text
+    )
+
+    canvas.restoreState()
+
 app = Flask(__name__)
 
 @app.route("/")
@@ -182,7 +220,8 @@ def process_excel():
         elements.append(Spacer(1, 0.15 * inch))     
         
         elements.append(table)
-        doc.build(elements)
+        #doc.build(elements)
+        doc.build(elements, onFirstPage=add_header_footer, onLaterPages=add_header_footer)
 
         pdf_buffer.seek(0)
         pdf_base64 = base64.b64encode(pdf_buffer.read()).decode('utf-8')
