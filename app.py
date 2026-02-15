@@ -8,6 +8,7 @@ from reportlab.lib import colors
 from reportlab.lib.units import inch
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.enums import TA_CENTER
 
 app = Flask(__name__)
 
@@ -170,8 +171,14 @@ def process_excel():
             ('GRID', (0,0), (-1,-1), 1, colors.black)
         ]))
 
-        elements.append(Spacer(1, 0.3 * inch))
-        elements.append(Paragraph("Summary Metrics", styles['Heading2']))
+        centered_heading = ParagraphStyle(
+        name='CenteredHeading',
+        parent=styles['Heading2'],
+        alignment=TA_CENTER)
+
+        elements.append(Spacer(1, 0.2 * inch))
+        #elements.append(Paragraph("Summary Metrics", styles['Heading2']))
+        elements.append(Paragraph("Summary Metrics", centered_heading))
         elements.append(Spacer(1, 0.15 * inch))     
         
         elements.append(table)
