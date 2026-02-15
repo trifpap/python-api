@@ -135,8 +135,13 @@ def process_excel():
         elements.append(Paragraph(f"Generated On: {datetime.datetime.now()}", styles['Normal']))
         elements.append(Spacer(1, 0.4 * inch))
 
-        elements.append(Paragraph(summary_text, styles['Normal']))
-        elements.append(Spacer(1, 0.5 * inch))
+        
+        for line in summary_text.split("\n"):
+            if line.strip() == "":
+                elements.append(Spacer(1, 0.2 * inch))
+            else:
+                elements.append(Paragraph(line.strip(), styles['Normal']))
+                elements.append(Spacer(1, 0.5 * inch))
 
         table_data = summary_df.values.tolist()
         table_data.insert(0, list(summary_df.columns))
