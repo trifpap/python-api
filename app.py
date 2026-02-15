@@ -264,7 +264,7 @@ def process_excel():
             elements.append(Paragraph(f"- {col}", styles['Normal']))               
 
         table_data = summary_df.values.tolist()
-        table_data.insert(0, list(summary_df.columns))
+        table_data.insert(0, list(summary_df.columns))       
 
         table = Table(table_data)
         table.setStyle(TableStyle([
@@ -282,7 +282,67 @@ def process_excel():
         elements.append(Spacer(1, 0.15 * inch))     
         
         elements.append(table)
-        #doc.build(elements)
+
+        # A) NULL COUNTS TABLE
+        elements.append(Spacer(1, 0.3 * inch))
+        elements.append(Paragraph("Null Values per Column", centered_heading))
+        elements.append(Spacer(1, 0.15 * inch))
+
+        null_table_data = null_df.values.tolist()
+        null_table_data.insert(0, list(null_df.columns))
+
+        null_table = Table(null_table_data)
+        null_table.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,0), colors.grey),
+            ('GRID', (0,0), (-1,-1), 1, colors.black)
+        ]))
+
+        elements.append(null_table)
+
+        # B) NUMERIC STATISTICS TABLE
+        if not stats_df.empty:
+            elements.append(Spacer(1, 0.3 * inch))
+            elements.append(Paragraph("Numeric Statistics", centered_heading))
+            elements.append(Spacer(1, 0.15 * inch))
+
+            stats_table_data = stats_df.reset_index().values.tolist()
+            stats_table_data.insert(0, ["Column"] + list(stats_df.columns))
+
+            #stats_table = Table(stats_table_data)
+            num_cols = len(stats_table_data[0])
+            #stats_table = Table(
+            #    stats_table_data,
+            #    colWidths=[100, 60, 60, 60, 60, 60]
+            #)
+            stats_table = Table(
+                stats_table_data,
+                colWidths=[80] * num_cols
+            )
+
+            stats_table.setStyle(TableStyle([
+                ('BACKGROUND', (0,0), (-1,0), colors.grey),
+                ('GRID', (0,0), (-1,-1), 1, colors.black)
+            ]))            
+
+            elements.append(stats_table)
+
+        # C) COUNTRY FREQUENCY TABLE
+        if not country_freq.empty:
+            elements.append(Spacer(1, 0.3 * inch))
+            elements.append(Paragraph("Country Frequency", centered_heading))
+            elements.append(Spacer(1, 0.15 * inch))
+
+            country_table_data = country_freq.values.tolist()
+            country_table_data.insert(0, list(country_freq.columns))
+
+            country_table = Table(country_table_data)
+            country_table.setStyle(TableStyle([
+                ('BACKGROUND', (0,0), (-1,0), colors.grey),
+                ('GRID', (0,0), (-1,-1), 1, colors.black)
+            ]))
+
+            elements.append(country_table)
+
         doc.build(elements, onFirstPage=add_header_footer, onLaterPages=add_header_footer)
 
         pdf_buffer.seek(0)
