@@ -170,6 +170,10 @@ def process_excel():
             ('GRID', (0,0), (-1,-1), 1, colors.black)
         ]))
 
+        elements.append(Spacer(1, 0.3 * inch))
+        elements.append(Paragraph("Summary Metrics", styles['Heading2']))
+        elements.append(Spacer(1, 0.15 * inch))     
+        
         elements.append(table)
         doc.build(elements)
 
