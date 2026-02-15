@@ -198,15 +198,18 @@ def process_excel():
         logo_path = "logo.png"       
 
         if os.path.exists(logo_path):
-            logo = Image(logo_path)
-
-            # Set only width
+            logo = Image(logo_path)           
+          
             logo.drawWidth = 3 * inch
             logo.drawHeight = logo.drawWidth * logo.imageHeight / logo.imageWidth
+            logo.hAlign = 'CENTER'    
 
-            logo.hAlign = 'CENTER'
-            elements.append(logo)
-            elements.append(Spacer(1, 0.3 * inch))    
+            # Use original image size (no distortion, no scaling)
+            #logo.hAlign = 'CENTER'
+
+            #elements.append(logo)
+            #elements.append(Spacer(1, 0.3 * inch))
+
 
         # -------- LINE --------    
         elements.append(Spacer(1, 0.1 * inch))
