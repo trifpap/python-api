@@ -204,7 +204,7 @@ def process_excel():
             logo = Image(logo_path)
 
             # Smaller controlled size (clean, not dominant)
-            logo.drawWidth = 0.85 * inch
+            logo.drawWidth = 4 * inch
             logo.drawHeight = logo.drawWidth * logo.imageHeight / logo.imageWidth
             logo.hAlign = 'CENTER'           
 
