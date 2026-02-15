@@ -12,6 +12,7 @@ from reportlab.lib.enums import TA_CENTER
 
 from reportlab.lib.units import inch
 from reportlab.lib.utils import ImageReader
+from reportlab.platypus import Image
 import os
 
 def add_header_footer(canvas, doc):
@@ -19,23 +20,22 @@ def add_header_footer(canvas, doc):
 
     # -------- LOGO HEADER --------
     logo_path = "logo.png"   # Put your logo file in same folder
-    if os.path.exists(logo_path):
-        canvas.drawImage(
-            logo_path,
-            doc.leftMargin,
-            doc.height + doc.topMargin - 0.5 * inch,
-            width=1.2 * inch,
-            height=0.5 * inch,
-            preserveAspectRatio=True
-        )
+    #if os.path.exists(logo_path):
+    #    canvas.drawImage(
+    #        logo_path,
+    #        doc.leftMargin,
+    #        doc.height + doc.topMargin - 0.5 * inch,
+    #        width=1.2 * inch,
+    #        height=0.5 * inch,
+    #        preserveAspectRatio=True
+    #    )
 
-
-    canvas.line(
-        doc.leftMargin,
-        doc.height + doc.topMargin - 0.6 * inch,
-        doc.width + doc.rightMargin,
-        doc.height + doc.topMargin - 0.6 * inch
-        )    
+    #canvas.line(
+    #    doc.leftMargin,
+    #    doc.height + doc.topMargin - 0.6 * inch,
+    #    doc.width + doc.rightMargin,
+    #    doc.height + doc.topMargin - 0.6 * inch
+    #    )    
 
     # -------- FOOTER --------
     page_number_text = f"Page {doc.page}"
@@ -166,8 +166,25 @@ def process_excel():
         pdf_buffer = io.BytesIO()
         doc = SimpleDocTemplate(pdf_buffer)
         elements = []
-        styles = getSampleStyleSheet()
+        styles = getSampleStyleSheet()    
 
+        # -------- LOGO (TOP CENTERED) --------
+        logo_path = "logo.png"
+
+        if os.path.exists(logo_path):
+            logo = Image(logo_path)
+            logo.drawHeight = 1.2 * inch
+            logo.drawWidth = 2.5 * inch
+            logo.hAlign = 'CENTER'
+            elements.append(logo)
+            elements.append(Spacer(1, 0.25 * inch))
+
+        # -------- LINE --------    
+        elements.append(Spacer(1, 0.1 * inch))
+        elements.append(Table([[""]], colWidths=[400], rowHeights=[1]))
+        elements.append(Spacer(1, 0.3 * inch))    
+
+        # -------- TITLE --------                           
         elements.append(Paragraph("Excel Data Analysis Report", styles['Title']))
         elements.append(Spacer(1, 0.3 * inch))
 
