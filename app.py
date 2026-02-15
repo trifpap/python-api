@@ -7,6 +7,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib import colors
 from reportlab.lib.units import inch
 from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import ParagraphStyle
 
 app = Flask(__name__)
 
@@ -135,13 +136,29 @@ def process_excel():
         elements.append(Paragraph(f"Generated On: {datetime.datetime.now()}", styles['Normal']))
         elements.append(Spacer(1, 0.4 * inch))
 
-        
+
+        custom_style = ParagraphStyle(
+            'CustomNormal',
+            parent=styles['Normal'],
+            spaceAfter=6,  # points (6pt = subtle spacing)
+        )       
+
+        #for line in summary_text.split("\n"):
+        #    if line.strip():
+        #        elements.append(Paragraph(line.strip(), custom_style))
+
         for line in summary_text.split("\n"):
             if line.strip() == "":
-                elements.append(Spacer(1, 0.2 * inch))
+                elements.append(Spacer(1, 0.12 * inch))
             else:
-                elements.append(Paragraph(line.strip(), styles['Normal']))
-                elements.append(Spacer(1, 0.5 * inch))
+                elements.append(Paragraph(line.strip(), styles['custom_style']))                 
+        
+        #for line in summary_text.split("\n"):
+        #    if line.strip() == "":
+        #        elements.append(Spacer(1, 0.12 * inch))
+        #    else:
+        #        elements.append(Paragraph(line.strip(), styles['Normal']))
+        #        elements.append(Spacer(1, 0.08 * inch))
 
         table_data = summary_df.values.tolist()
         table_data.insert(0, list(summary_df.columns))
