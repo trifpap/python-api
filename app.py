@@ -151,7 +151,7 @@ def process_excel():
             if line.strip() == "":
                 elements.append(Spacer(1, 0.12 * inch))
             else:
-                elements.append(Paragraph(line.strip(), styles['custom_style']))                 
+                elements.append(Paragraph(line.strip(), custom_style))                 
         
         #for line in summary_text.split("\n"):
         #    if line.strip() == "":
