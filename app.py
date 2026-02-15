@@ -163,8 +163,8 @@ def process_excel():
         excel_base64 = base64.b64encode(excel_buffer.read()).decode('utf-8')
 
         # ---------------- AI STYLE SUMMARY TEXT ----------------      
-        #original_df = pd.read_excel(request.files['file'])
-        original_columns = len(original_df.columns)        
+        original_df = pd.read_excel(request.files['file'])
+        #original_columns = len(original_df.columns)        
 
         summary_text = f"""
         The uploaded file '{original_filename}' originally contained {original_columns} columns.
