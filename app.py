@@ -204,12 +204,12 @@ def process_excel():
             logo = Image(logo_path)
 
             # Smaller controlled size (clean, not dominant)
-            logo.drawWidth = 1.7 * inch
+            logo.drawWidth = 0.85 * inch
             logo.drawHeight = logo.drawWidth * logo.imageHeight / logo.imageWidth
             logo.hAlign = 'CENTER'           
 
             elements.append(logo)
-            elements.append(Spacer(1, 0.12 * inch))
+            elements.append(Spacer(1, 0.10 * inch))
 
 
         # -------- LINE --------    
