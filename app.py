@@ -173,14 +173,12 @@ def process_excel():
 
         # ---------------- AI STYLE SUMMARY TEXT ----------------             
         summary_text = f"""
-        The uploaded file '{original_filename}' originally contained 
-        {original_columns_count} columns.
+        The uploaded file '{original_filename}' originally contained {original_columns_count} columns.
 
         Original Columns:
         {", ".join(original_columns_list)}
 
-        After cleaning and standardization, the processed dataset 
-        ('{excel_filename}') contains {num_rows} rows and 
+        After cleaning and standardization, the processed dataset ('{excel_filename}') contains {num_rows} rows and 
         {processed_columns_count} columns.
 
         Processed Columns:
