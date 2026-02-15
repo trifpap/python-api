@@ -71,6 +71,7 @@ def process_excel():
 
         # Capture original columns
         original_columns_list = list(df.columns)
+        original_columns_list = [col.strip().upper() for col in df.columns]
         original_columns_count = len(original_columns_list)
 
         # ---------------- CLEANING ----------------
@@ -80,14 +81,24 @@ def process_excel():
 
         for col in df.columns:
             #if df[col].dtype == object:
-            if pd.api.types.is_string_dtype(df[col]):
+            #if pd.api.types.is_string_dtype(df[col]):
+            if df[col].dtype == object or pd.api.types.is_string_dtype(df[col]):    
+                #df[col] = (
+                    #df[col]
+                    #.astype(str)                # ensure string
+                    #.where(df[col].notna(), None)
+
+                    #.str.strip()                # remove leading/trailing spaces
+                    #.str.replace(r'\s+', ' ', regex=True)  # remove extra inner spaces
+                    #.str.upper()     # Convert EVERYTHING to uppercase
+                #)
+
                 df[col] = (
                     df[col]
-                    #.astype(str)                # ensure string
-                    .where(df[col].notna(), None)
-                    .str.strip()                # remove leading/trailing spaces
-                    .str.replace(r'\s+', ' ', regex=True)  # remove extra inner spaces
-                    .str.upper()     # Convert EVERYTHING to uppercase
+                    .fillna('')
+                    .str.strip()
+                    .str.replace(r'\s+', ' ', regex=True)
+                    .str.upper()
                 )
 
                 # Apply specific formatting rules
@@ -210,10 +221,7 @@ def process_excel():
         styles = getSampleStyleSheet()    
 
         # -------- LOGO (TOP CENTERED) --------
-        logo_path = "logo.png"       
-
-        # -------- LOGO (TOP CENTERED) --------
-        logo_path = "logo.png"
+        logo_path = "logo.png"               
 
         if os.path.exists(logo_path):
             logo = Image(logo_path)
@@ -231,7 +239,8 @@ def process_excel():
         # -------- LINE --------    
         elements.append(Spacer(1, 0.1 * inch))
         # Thin line
-        line = Table([[""]], colWidths=[450], rowHeights=[1])
+        # line = Table([[""]], colWidths=[450], rowHeights=[1])
+        line = Table([[""]], colWidths=[doc.width], rowHeights=[1])
         line.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, -1), colors.black)
         ]))
@@ -260,9 +269,9 @@ def process_excel():
             if line.strip():
                 elements.append(Paragraph(line.strip(), custom_style))
 
-        elements.append(Paragraph("<b>Original Columns:</b>", styles['Normal']))
-        for col in original_columns_list:
-            elements.append(Paragraph(f"- {col}", styles['Normal']))               
+        #elements.append(Paragraph("<b>Original Columns:</b>", styles['Normal']))
+        #for col in original_columns_list:
+        #    elements.append(Paragraph(f"- {col}", styles['Normal']))               
 
         table_data = summary_df.values.tolist()
         table_data.insert(0, list(summary_df.columns))       
@@ -307,14 +316,8 @@ def process_excel():
             elements.append(Spacer(1, 0.15 * inch))
 
             stats_table_data = stats_df.reset_index().values.tolist()
-            stats_table_data.insert(0, ["Column"] + list(stats_df.columns))
+            stats_table_data.insert(0, ["Column"] + list(stats_df.columns))           
             
-            #num_cols = len(stats_table_data[0])
-            #stats_table = Table(
-            #    stats_table_data,
-            #    colWidths=[80] * num_cols
-            #)
-
             available_width = doc.width
             num_cols = len(stats_table_data[0])
             col_width = available_width / num_cols
