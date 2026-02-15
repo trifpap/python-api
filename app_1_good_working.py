@@ -70,31 +70,7 @@ def process_excel():
 
         # ---------------- CLEANING ----------------
         df.dropna(how='all', inplace=True)
-        df.columns = [col.strip().upper() for col in df.columns]        
-        # ---------------- VALUE STANDARDIZATION ----------------
-
-        for col in df.columns:
-            #if df[col].dtype == object:
-            if pd.api.types.is_string_dtype(df[col]):
-                df[col] = (
-                    df[col]
-                    #.astype(str)                # ensure string
-                    .where(df[col].notna(), None)
-                    .str.strip()                # remove leading/trailing spaces
-                    .str.replace(r'\s+', ' ', regex=True)  # remove extra inner spaces
-                    .str.upper()     # Convert EVERYTHING to uppercase
-                )
-
-                # Apply specific formatting rules
-                if col == "EMAIL":
-                    df[col] = df[col].str.lower()
-
-                #elif col == "COUNTRY":
-                #    df[col] = df[col].str.upper()
-
-                #else:
-                #    df[col] = df[col].str.title()
-
+        df.columns = [col.strip().upper() for col in df.columns]
         df.columns = df.columns.str.replace(r'\.\d+$', '', regex=True)
         df = df.loc[:, ~df.columns.duplicated()]
         duplicate_rows = df.duplicated().sum()
@@ -162,7 +138,7 @@ def process_excel():
         excel_base64 = base64.b64encode(excel_buffer.read()).decode('utf-8')
 
         # ---------------- AI STYLE SUMMARY TEXT ----------------      
-        #original_df = pd.read_excel(request.files['file'])
+        original_df = pd.read_excel(request.files['file'])
         #original_columns = len(original_df.columns)        
 
         summary_text = f"""
