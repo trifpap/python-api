@@ -66,7 +66,11 @@ def process_excel():
 
     try:
         df = pd.read_excel(uploaded_file)
-        original_columns = len(df.columns)
+        #original_columns = len(df.columns)
+
+        # Capture original columns
+        original_columns_list = list(df.columns)
+        original_columns_count = len(original_columns_list)
 
         # ---------------- CLEANING ----------------
         df.dropna(how='all', inplace=True)
@@ -99,6 +103,12 @@ def process_excel():
         df = df.loc[:, ~df.columns.duplicated()]
         duplicate_rows = df.duplicated().sum()
         df = df.drop_duplicates()
+
+        processed_columns_list = list(df.columns)
+        processed_columns_count = len(processed_columns_list)
+
+        # Detect removed columns
+        removed_columns = list(set(original_columns_list) - set(processed_columns_list))
 
         # ---------------- METRICS ----------------
         num_rows = len(df)
@@ -161,29 +171,33 @@ def process_excel():
         excel_buffer.seek(0)
         excel_base64 = base64.b64encode(excel_buffer.read()).decode('utf-8')
 
-        # ---------------- AI STYLE SUMMARY TEXT ----------------      
-        #original_df = pd.read_excel(request.files['file'])
-        #original_columns = len(original_df.columns)        
-
+        # ---------------- AI STYLE SUMMARY TEXT ----------------             
         summary_text = f"""
-        The uploaded file '{original_filename}' originally contained {original_columns} columns.
+        The uploaded file '{original_filename}' originally contained 
+        {original_columns_count} columns.
+
+        Original Columns:
+        {", ".join(original_columns_list)}
 
         After cleaning and standardization, the processed dataset 
-        ('{excel_filename}') contains {num_rows} rows and {num_columns} columns.
+        ('{excel_filename}') contains {num_rows} rows and 
+        {processed_columns_count} columns.
+
+        Processed Columns:
+        {", ".join(processed_columns_list)}
+        """
+
+        if removed_columns:
+            summary_text += f"\nColumns Removed: {', '.join(removed_columns)}"
+        else:
+            summary_text += "\nColumns Removed: None"
+
+        summary_text += f"""
 
         Data Quality Score: {quality_score}%.
         Duplicate Rows Removed: {duplicate_rows}.
         Total Null Values: {total_nulls}.
-        
         """
-
-        if not numeric_df.empty:
-            top_metric = numeric_df.mean().idxmax()
-            summary_text += f" Highest average numeric column is {top_metric}."
-
-        if "COUNTRY" in df.columns:
-            top_country = df["COUNTRY"].value_counts().idxmax()
-            summary_text += f" Most frequent country is {top_country}."
 
         # ---------------- PDF GENERATION ----------------
         pdf_filename = f"report_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"        
@@ -246,7 +260,11 @@ def process_excel():
 
         for line in summary_text.split("\n"):
             if line.strip():
-                elements.append(Paragraph(line.strip(), custom_style))       
+                elements.append(Paragraph(line.strip(), custom_style))
+
+        elements.append(Paragraph("<b>Original Columns:</b>", styles['Normal']))
+        for col in original_columns_list:
+            elements.append(Paragraph(f"- {col}", styles['Normal']))               
 
         table_data = summary_df.values.tolist()
         table_data.insert(0, list(summary_df.columns))
