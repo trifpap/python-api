@@ -178,8 +178,7 @@ def process_excel():
         Original Columns:
         {", ".join(original_columns_list)}
 
-        After cleaning and standardization, the processed dataset ('{excel_filename}') contains {num_rows} rows and 
-        {processed_columns_count} columns.
+        After cleaning and standardization, the processed dataset ('{excel_filename}') contains {num_rows} rows and {processed_columns_count} columns.
 
         Processed Columns:
         {", ".join(processed_columns_list)}
@@ -278,8 +277,7 @@ def process_excel():
         parent=styles['Heading2'],
         alignment=TA_CENTER)
 
-        elements.append(Spacer(1, 0.2 * inch))
-        #elements.append(Paragraph("Summary Metrics", styles['Heading2']))
+        elements.append(Spacer(1, 0.2 * inch))        
         elements.append(Paragraph("Summary Metrics", centered_heading))
         elements.append(Spacer(1, 0.15 * inch))     
         
