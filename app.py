@@ -190,7 +190,11 @@ def process_excel():
         pdf_filename = f"report_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
 
         pdf_buffer = io.BytesIO()
-        doc = SimpleDocTemplate(pdf_buffer)
+        #doc = SimpleDocTemplate(pdf_buffer)
+        doc = SimpleDocTemplate(
+            pdf_buffer,
+            topMargin=0.6 * inch   # default is usually 1 inch
+        )
         elements = []
         styles = getSampleStyleSheet()    
 
