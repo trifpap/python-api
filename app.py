@@ -97,17 +97,16 @@ def process_excel():
 
         # ---------------- AI STYLE SUMMARY TEXT ----------------      
         original_df = pd.read_excel(request.files['file'])
-        original_columns = len(original_df.columns)
+        original_columns = len(original_df.columns)        
 
         summary_text = f"""
-        The uploaded file '{original_filename}' originally contained 
-        {original_columns} columns.
+        The uploaded file '{original_filename}' originally contained {original_columns} columns.<br/><br/>
 
         After cleaning and standardization, the processed dataset 
-        ('{excel_filename}') contains {num_rows} rows and {num_columns} columns.
+        ('{excel_filename}') contains {num_rows} rows and {num_columns} columns.<br/><br/>
 
-        Data Quality Score: {quality_score}%.
-        Duplicate Rows Removed: {duplicate_rows}.
+        Data Quality Score: {quality_score}%.<br/>
+        Duplicate Rows Removed: {duplicate_rows}.<br/>
         Total Null Values: {total_nulls}.
         """
 
