@@ -197,24 +197,32 @@ def process_excel():
         # -------- LOGO (TOP CENTERED) --------
         logo_path = "logo.png"       
 
-        if os.path.exists(logo_path):
-            logo = Image(logo_path)           
-          
-            #logo.drawWidth = 3 * inch
-            #ogo.drawHeight = logo.drawWidth * logo.imageHeight / logo.imageWidth
-            #logo.hAlign = 'CENTER'    
+        # -------- LOGO (TOP CENTERED) --------
+        logo_path = "logo.png"
 
-            # Use original image size (no distortion, no scaling)
+        if os.path.exists(logo_path):
+            logo = Image(logo_path)
+
+            # Set a controlled smaller width
+            logo.drawWidth = 2.2 * inch
+            logo.drawHeight = logo.drawWidth * logo.imageHeight / logo.imageWidth
+
             logo.hAlign = 'CENTER'
 
             elements.append(logo)
-            elements.append(Spacer(1, 0.3 * inch))
+            elements.append(Spacer(1, 0.15 * inch))
 
 
         # -------- LINE --------    
         elements.append(Spacer(1, 0.1 * inch))
-        elements.append(Table([[""]], colWidths=[400], rowHeights=[1]))
-        elements.append(Spacer(1, 0.3 * inch))    
+        # Thin line
+        line = Table([[""]], colWidths=[450], rowHeights=[1])
+        line.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), colors.black)
+        ]))
+        elements.append(line)
+
+        elements.append(Spacer(1, 0.2 * inch))
 
         # -------- TITLE --------                           
         elements.append(Paragraph("Excel Data Analysis Report", styles['Title']))
