@@ -16,6 +16,10 @@ from reportlab.platypus import Image
 from reportlab.platypus import KeepTogether
 import os
 
+from openpyxl.chart import BarChart, Reference
+from openpyxl.styles import PatternFill
+
+
 def add_header_footer(canvas, doc):
     canvas.saveState()
 
@@ -180,9 +184,69 @@ def process_excel():
 
             if not country_freq.empty:
                 country_freq.to_excel(writer, sheet_name="COUNTRY_FREQ", index=False)
+       
 
+            workbook = writer.book
+
+            # ---------------- MEAN BAR CHART ----------------
+            if not stats_df.empty:
+                sheet = writer.sheets["NUMERIC_STATS"]
+                chart = BarChart()
+                chart.title = "Mean Values"
+                chart.y_axis.title = "Mean"
+                chart.x_axis.title = "Columns"
+
+                data = Reference(sheet, min_col=2, min_row=1,
+                                    max_col=2, max_row=len(stats_df)+1)
+                cats = Reference(sheet, min_col=1, min_row=2,
+                                    max_row=len(stats_df)+1)
+
+                chart.add_data(data, titles_from_data=True)
+                chart.set_categories(cats)
+                sheet.add_chart(chart, "H2")
+
+            # ---------------- COUNTRY BAR CHART ----------------
+            if not country_freq.empty:
+                sheet = writer.sheets["COUNTRY_FREQ"]
+                chart = BarChart()
+                chart.title = "Country Distribution"
+                chart.y_axis.title = "Count"
+
+                data = Reference(sheet, min_col=2, min_row=1,
+                                    max_col=2, max_row=len(country_freq)+1)
+                cats = Reference(sheet, min_col=1, min_row=2,
+                                    max_row=len(country_freq)+1)
+
+                chart.add_data(data, titles_from_data=True)
+                chart.set_categories(cats)
+                sheet.add_chart(chart, "E2")
+
+            # ---------------- DATA QUALITY VISUAL ----------------
+            summary_sheet = writer.sheets["SUMMARY"]
+            if quality_score >= 80:
+                fill = PatternFill(start_color="90EE90", end_color="90EE90", fill_type="solid")
+            elif quality_score >= 50:
+                fill = PatternFill(start_color="FFD700", end_color="FFD700", fill_type="solid")
+            else:
+                fill = PatternFill(start_color="FF7F7F", end_color="FF7F7F", fill_type="solid")
+
+            summary_sheet["B4"].fill = fill  # Quality score cell
+
+            # ---------------- NULL HEATMAP ----------------
+            heatmap_sheet = workbook.create_sheet("NULL_HEATMAP")
+
+            for r in range(len(df)):
+                for c in range(len(df.columns)):
+                    cell = heatmap_sheet.cell(row=r+1, column=c+1)
+                    if pd.isnull(df.iloc[r, c]):
+                        cell.fill = PatternFill(start_color="FF9999", end_color="FF9999", fill_type="solid")
+
+        
         excel_buffer.seek(0)
         excel_base64 = base64.b64encode(excel_buffer.read()).decode('utf-8')
+
+
+
 
         # ---------------- AI STYLE SUMMARY TEXT ----------------             
         summary_text = f"""
