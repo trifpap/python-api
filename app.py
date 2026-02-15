@@ -84,29 +84,37 @@ def process_excel():
         # ---------------- VALUE STANDARDIZATION ----------------
 
         for col in df.columns:
-            #if df[col].dtype == object:
-            #if pd.api.types.is_string_dtype(df[col]):
-            if df[col].dtype == object or pd.api.types.is_string_dtype(df[col]):    
+
+            if df[col].dtype == object or pd.api.types.is_string_dtype(df[col]):
+
                 df[col] = (
                     df[col]
-                    .fillna('')
+                    .where(df[col].notna(), None)   # Preserve real NaN values
+                    .astype(str)
                     .str.strip()
                     .str.replace(r'\s+', ' ', regex=True)
-                    .str.upper()
                 )
 
-                # Apply specific formatting rules
+                # Convert empty strings back to proper NaN
+                df[col] = df[col].replace('', pd.NA)
+
+                # Standard formatting
+                df[col] = df[col].str.upper()
+
+                # Specific formatting rules
                 if col == "EMAIL":
                     df[col] = df[col].str.lower()
 
-                #elif col == "COUNTRY":
-                #    df[col] = df[col].str.upper()
+        # 🔥 Convert blank-only cells to real NaN
+        df.replace(r'^\s*$', pd.NA, regex=True, inplace=True)
 
-                #else:
-                #    df[col] = df[col].str.title()
-
+        # Clean duplicated column names like AGE.1
         df.columns = df.columns.str.replace(r'\.\d+$', '', regex=True)
+
+        # Remove duplicate columns
         df = df.loc[:, ~df.columns.duplicated()]
+
+        # Remove duplicate rows
         duplicate_rows = df.duplicated().sum()
         df = df.drop_duplicates()
 
