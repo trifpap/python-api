@@ -109,6 +109,7 @@ def process_excel():
         Data Quality Score: {quality_score}%.
         Duplicate Rows Removed: {duplicate_rows}.
         Total Null Values: {total_nulls}.
+        
         """
 
         if not numeric_df.empty:
