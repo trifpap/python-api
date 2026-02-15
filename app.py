@@ -13,6 +13,7 @@ from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.units import inch
 from reportlab.lib.utils import ImageReader
 from reportlab.platypus import Image
+from reportlab.platypus import KeepTogether
 import os
 
 def add_header_footer(canvas, doc):
@@ -281,7 +282,7 @@ def process_excel():
         elements.append(Paragraph("Summary Metrics", centered_heading))
         elements.append(Spacer(1, 0.15 * inch))     
         
-        elements.append(table)
+        elements.append(KeepTogether(table))
 
         # A) NULL COUNTS TABLE
         elements.append(Spacer(1, 0.3 * inch))
@@ -297,7 +298,7 @@ def process_excel():
             ('GRID', (0,0), (-1,-1), 1, colors.black)
         ]))
 
-        elements.append(null_table)
+        elements.append(KeepTogether(null_table))
 
         # B) NUMERIC STATISTICS TABLE
         if not stats_df.empty:
@@ -307,24 +308,31 @@ def process_excel():
 
             stats_table_data = stats_df.reset_index().values.tolist()
             stats_table_data.insert(0, ["Column"] + list(stats_df.columns))
-
-            #stats_table = Table(stats_table_data)
-            num_cols = len(stats_table_data[0])
+            
+            #num_cols = len(stats_table_data[0])
             #stats_table = Table(
             #    stats_table_data,
-            #    colWidths=[100, 60, 60, 60, 60, 60]
+            #    colWidths=[80] * num_cols
             #)
+
+            available_width = doc.width
+            num_cols = len(stats_table_data[0])
+            col_width = available_width / num_cols
+
             stats_table = Table(
                 stats_table_data,
-                colWidths=[80] * num_cols
+                colWidths=[col_width] * num_cols,
+                repeatRows=1
             )
 
             stats_table.setStyle(TableStyle([
                 ('BACKGROUND', (0,0), (-1,0), colors.grey),
-                ('GRID', (0,0), (-1,-1), 1, colors.black)
-            ]))            
+                ('GRID', (0,0), (-1,-1), 1, colors.black),
+                ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+                ('ALIGN', (1,1), (-1,-1), 'CENTER'),
+            ]))        
 
-            elements.append(stats_table)
+            elements.append(KeepTogether(stats_table))
 
         # C) COUNTRY FREQUENCY TABLE
         if not country_freq.empty:
@@ -341,7 +349,7 @@ def process_excel():
                 ('GRID', (0,0), (-1,-1), 1, colors.black)
             ]))
 
-            elements.append(country_table)
+            elements.append(KeepTogether(country_table))            
 
         doc.build(elements, onFirstPage=add_header_footer, onLaterPages=add_header_footer)
 
