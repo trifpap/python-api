@@ -19,32 +19,7 @@ def add_header_footer(canvas, doc):
     canvas.saveState()
 
     # -------- LOGO HEADER --------
-    logo_path = "logo.png"   # Put your logo file in same folder
-    #if os.path.exists(logo_path):
-    #    canvas.drawImage(
-    #        logo_path,
-    #        doc.leftMargin,
-    #        doc.height + doc.topMargin - 0.5 * inch,
-    #        width=1.2 * inch,
-    #        height=0.5 * inch,
-    #        preserveAspectRatio=True
-    #    )
-
-    #canvas.line(
-    #    doc.leftMargin,
-    #    doc.height + doc.topMargin - 0.6 * inch,
-    #    doc.width + doc.rightMargin,
-    #    doc.height + doc.topMargin - 0.6 * inch
-    #    )    
-
-    # -------- FOOTER --------
-    #page_number_text = f"Page {doc.page}"
-    #canvas.setFont("Helvetica", 9)
-    #canvas.drawRightString(
-    #    doc.width + doc.rightMargin,
-    #    0.5 * inch,
-    #    page_number_text
-    #)
+    logo_path = "logo.png"   # Put your logo file in same folder   
 
     canvas.line(
     doc.leftMargin,
@@ -187,8 +162,8 @@ def process_excel():
             summary_text += f" Most frequent country is {top_country}."
 
         # ---------------- PDF GENERATION ----------------
-        pdf_filename = f"report_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
-
+        pdf_filename = f"report_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"        
+        
         pdf_buffer = io.BytesIO()
         #doc = SimpleDocTemplate(pdf_buffer)
         doc = SimpleDocTemplate(
@@ -207,9 +182,7 @@ def process_excel():
         if os.path.exists(logo_path):
             logo = Image(logo_path)
 
-            # Smaller controlled size (clean, not dominant)
-            #logo.drawWidth = 8 * inch
-            #logo.drawHeight = logo.drawWidth * logo.imageHeight / logo.imageWidth
+            # Smaller controlled size (clean, not dominant)            
             logo.drawWidth = 3 * inch
             logo.drawHeight = logo.drawWidth * 83 / 516
             
@@ -249,20 +222,7 @@ def process_excel():
 
         for line in summary_text.split("\n"):
             if line.strip():
-                elements.append(Paragraph(line.strip(), custom_style))
-
-        #for line in summary_text.split("\n"):
-        #    if line.strip() == "":
-        #        elements.append(Spacer(1, 0.12 * inch))
-        #    else:
-        #        elements.append(Paragraph(line.strip(), custom_style))                 
-        
-        #for line in summary_text.split("\n"):
-        #    if line.strip() == "":
-        #        elements.append(Spacer(1, 0.12 * inch))
-        #    else:
-        #        elements.append(Paragraph(line.strip(), styles['Normal']))
-        #        elements.append(Spacer(1, 0.08 * inch))
+                elements.append(Paragraph(line.strip(), custom_style))       
 
         table_data = summary_df.values.tolist()
         table_data.insert(0, list(summary_df.columns))
