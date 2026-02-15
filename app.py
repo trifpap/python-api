@@ -100,13 +100,13 @@ def process_excel():
         original_columns = len(original_df.columns)        
 
         summary_text = f"""
-        The uploaded file '{original_filename}' originally contained {original_columns} columns.<br/><br/>
+        The uploaded file '{original_filename}' originally contained {original_columns} columns.
 
         After cleaning and standardization, the processed dataset 
-        ('{excel_filename}') contains {num_rows} rows and {num_columns} columns.<br/><br/>
+        ('{excel_filename}') contains {num_rows} rows and {num_columns} columns.
 
-        Data Quality Score: {quality_score}%.<br/>
-        Duplicate Rows Removed: {duplicate_rows}.<br/>
+        Data Quality Score: {quality_score}%.
+        Duplicate Rows Removed: {duplicate_rows}.
         Total Null Values: {total_nulls}.
         """
 
